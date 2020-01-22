@@ -24,7 +24,7 @@ async fn main() -> std::io::Result<()> {
             .data(server.clone())
             .service(web::resource("/chat/").to(chat_route))
     })
-    .bind("0.0.0.0:80")?
+    .bind("0.0.0.0:8000")?
     .run()
     .await
 }
