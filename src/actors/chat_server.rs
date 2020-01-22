@@ -16,6 +16,7 @@ pub struct Disconnect {
   pub id: Uuid,
 }
 
+#[derive(Clone)]
 pub struct ChatServer {
   sessions: HashMap<Uuid, Recipient<Msg>>,
 }
@@ -52,5 +53,13 @@ impl Handler<Disconnect> for ChatServer {
 
   fn handle(&mut self, msg: Disconnect, _: &mut Self::Context) {
     self.sessions.remove(&msg.id);
+  }
+}
+
+impl Handler<Msg> for ChatServer {
+  type Result = ();
+
+  fn handle(&mut self, msg: Msg, _: &mut Self::Context) {
+    self.send_msg(msg);
   }
 }
