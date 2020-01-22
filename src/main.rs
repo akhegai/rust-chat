@@ -16,7 +16,7 @@ async fn chat_route(
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
-    println!("Hello, world!");
+    println!("Chat server is starting...");
     let server = ChatServer::new().start();
 
     HttpServer::new(move || {
@@ -24,7 +24,7 @@ async fn main() -> std::io::Result<()> {
             .data(server.clone())
             .service(web::resource("/chat/").to(chat_route))
     })
-    .bind("127.0.0.1:8000")?
+    .bind("10.16.193.75:8000")?
     .run()
     .await
 }

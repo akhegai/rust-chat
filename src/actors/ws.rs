@@ -1,7 +1,8 @@
 use crate::actors::chat_server::{ChatServer, Connect, Disconnect};
-use crate::model::Msg;
+use crate::model::{ClientMsg, Msg};
 use actix::{Actor, ActorContext, Addr, AsyncContext, Handler, Running, StreamHandler};
 use actix_web_actors::ws::{Message, ProtocolError, WebsocketContext};
+use chrono::Utc;
 use std::time::{Duration, Instant};
 use uuid::Uuid;
 
@@ -48,7 +49,6 @@ impl StreamHandler<Result<Message, ProtocolError>> for WsChatSession {
       Ok(msg) => msg,
     };
 
-    println!("WEBSOCKET MESSAGE: {:?}", msg);
     match msg {
       Message::Ping(msg) => {
         self.ts = Instant::now();
@@ -67,8 +67,16 @@ impl StreamHandler<Result<Message, ProtocolError>> for WsChatSession {
       Message::Nop => (),
 
       Message::Text(text) => {
-        let msg: Msg = serde_json::from_str(&text).unwrap();
-        self.chat_server.do_send(msg);
+        let msg: ClientMsg = serde_json::from_str(&text).unwrap();
+
+        println!("WEBSOCKET MESSAGE: {:?}", msg);
+
+        self.chat_server.do_send(Msg {
+          body: msg.body,
+          username: msg.username,
+          ts: Utc::now().naive_utc(),
+          id: self.id,
+        });
       }
     }
   }

@@ -11,3 +11,9 @@ pub struct Msg {
   pub body: String,
   pub ts: NaiveDateTime,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ClientMsg {
+  pub username: String,
+  pub body: String,
+}
